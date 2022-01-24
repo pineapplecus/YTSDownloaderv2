@@ -76,7 +76,7 @@ async def main(movie_title):
             options[i] = url
             print(f'{i}: {title} -- {year}')
         
-        answer = int(input("================\n Choose a number form above, to select your movie: \n"))
+        answer = int(input("================\n Choose a number from above, to select your movie: \n"))
         while answer not in list(range(len(movies))):
             answer = int(input("That wasn't a valid input. Choose a number from above. \n") )
         print("================")
