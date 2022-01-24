@@ -1,5 +1,2 @@
 pyppeteer
 asyncio
-QueueListener
-sys
-os

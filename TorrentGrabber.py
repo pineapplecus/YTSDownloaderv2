@@ -1,4 +1,3 @@
-from logging.handlers import QueueListener
 import sys
 import os
 import asyncio
@@ -25,8 +24,11 @@ async def grabTorrent(page):
     all = []
     qualities = ['BluRay', 'WEB']
     for quality in qualities: 
-        all += await page.Jx(f"//a[contains(., '{quality}')]")
-
+        possible =  await page.Jx(f"//a[contains(., '{quality}')]")
+        for element in possible: 
+            if await page.evaluate("(element) => $(element).is(':visible')", element) == True: 
+                all.append(element)
+        # all += await page.Jx(f"//a[contains(., '{quality}')]")
     quality = {}
     for button in all: 
         text = await page.evaluate('(element) => element.textContent', button)
@@ -80,13 +82,13 @@ async def main(movie_title):
         print("================")
         
         await page.goto(options[answer])
-        await grabTorrent(page)
-        DownloadTorrents(DOWNLOAD_DIR)
+        url = await grabTorrent(page)
+        DownloadTorrents(url)
 
-def DownloadTorrents(DIR): 
-    os.system(f'cd {DIR}')
-    os.system('ls *.torrent | xargs qbt torrent add file')
-    os.system(f'rm -rf *.torrent') #removes torrent files after using them
+def DownloadTorrents(link): 
+    os.system("echo 'Opening torrent...'")
+    os.system(f'cd {DOWNLOAD_DIR}' + """ && pwd && ls  *.torrent | sed 's,\(.*\),"\\1",' | xargs qbt torrent add file""")
+
     
 
 
