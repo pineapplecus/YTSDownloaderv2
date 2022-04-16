@@ -7,8 +7,7 @@ Useage:
 ![Bot in Action!](working.gif)
 
 ## Purpose: 
-I have a media server that I like to use for movies and watching them on any platform. The problem is that sometime's i'm not home and I want to download a movie, 
-but I can't since I'm away from home. So I made this script to download torrent files and use qbittorrent to use them.
+for educational purposes 💯
 
 ## Requirements:
 Check Requirements.txt
