@@ -1,2 +1,4 @@
 pyppeteer
 asyncio
+requests
+tqdm
