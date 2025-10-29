@@ -40,10 +40,51 @@ def save_qbittorrent_config(qbt_config):
     config["qbittorrent"] = qbt_config
     return save_config(config)
 
+def ensure_qbittorrent_running():
+    """Ensure qBittorrent is running, start it if not"""
+    import subprocess
+    
+    # Check if qBittorrent is running
+    try:
+        result = subprocess.run(['pgrep', '-f', 'qbittorrent'], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("✅ qBittorrent is already running")
+            return True
+    except:
+        pass
+    
+    # qBittorrent not running, start it
+    print("🚀 Starting qBittorrent...")
+    try:
+        env = os.environ.copy()
+        env['DISPLAY'] = ':0'
+        env['WAYLAND_DISPLAY'] = 'gamescope-0'
+        
+        subprocess.Popen(['flatpak', 'run', 'org.qbittorrent.qBittorrent'],
+                        env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Wait for qBittorrent to start
+        for i in range(10):
+            time.sleep(2)
+            result = subprocess.run(['pgrep', '-f', 'qbittorrent'], capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ qBittorrent started successfully")
+                return True
+        
+        print("⚠️  qBittorrent may not have started properly")
+        return False
+        
+    except Exception as e:
+        print(f"❌ Failed to start qBittorrent: {e}")
+        return False
+
 async def wait_for_watch_folder_processing(torrent_filename, torrent_hash):
     """Wait for qBittorrent to process the torrent file from watch folder"""
     watch_folder = os.path.expanduser("~/TorrentWatch")
     torrent_path = os.path.join(watch_folder, torrent_filename)
+    
+    # Ensure qBittorrent is running before waiting
+    ensure_qbittorrent_running()
     
     print("⏳ Waiting for qBittorrent to process torrent...")
     
